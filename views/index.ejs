@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PTwitter: <%= username %></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+      <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+        <ul class = "navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href = "/">Home</a>
+          </li>
+        </ul>
+      </div>
+      <span class="navbar-test">
+          <button type="button" class="btn btn-secondary">Tweet</button>
+        </span>
+    </nav>
+    <div class="container">
+      <div class = "row">
+        <div class = "col-md-4 name-contain ">
+           <div class = "box mt-5 .bg-info">
+           </div>
+            <div class="card bg-light border border-info rounded">
+            <h2 class="card-title text-center"><%=name%></h5>
+            <h6 class="text-center">@<%=username%></h6>
+            <div class = "row justify-content-around">
+              <div class = "text-center col-7">
+                Tweets <br> <%=tweets%>
+              </div>
+              <div class = "text-center col">
+                Followers <br> <%=followers%>
+              </div>
+          </div>
+         </div>
+        </div>
+        <div class = "col-md-8">
+
+          <div class="card bg-primary mt-3">
+            <div class="form-group">
+                <textarea type="text" onkeydown="limitText(this.form.message,this.form.countdown,160);" onkeyup='limitText(this.form.message,this.form.countdown,160);' id="post_area" class="form-control" placeholder="Type in here!"></textarea>
+                <div class="row">
+                  <div class = "container">
+                      <div class="col">
+                        <br>
+                        <div id="text_remain"></div>
+                      </div>
+                      <div class="col">
+                          <button type="button" class="btn float-right btn-secondary">Post</button>
+ 
+                      </div>   
+                  </div>
+                  
+                </div>
+              </div>
+  
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+        function limitText(limitField, limitCount, limitNum) {
+          if (limitField.value.length > limitNum) {
+            limitField.value = limitField.value.substring(0, limitNum);
+          } else {
+            limitCount.value = limitNum - limitField.value.length;
+          }
+          $('#text_remain').html(text_remaining + '/250');
+        }
+      $(document).ready(function() {
+        var text_max = 250;
+        $('#text_remain').html(text_max + '/250');
+
+        $('#post_area').keyup(function() {
+            var text_length = $('#post_area').val().replace(/rn/g, "n").length;
+            console.log(text_length);
+            var text_remaining = text_max - text_length;
+
+        $('#text_remain').html(text_remaining + '/250');
+    });
+});
+    </script>
+  </body>
+</html>
