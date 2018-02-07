@@ -24,9 +24,8 @@
     <div class="container">
       <div class = "row">
         <div class = "col-md-4 name-contain ">
-           <div class = "box mt-5 .bg-info">
-           </div>
-            <div class="card bg-light border border-info rounded">
+          <div class="card bg-light mt-5 border border-info rounded">
+          <img class="box" src="/images/backimg.png" alt="Card image cap">
             <h2 class="card-title text-center"><%=name%></h5>
             <h6 class="text-center">@<%=username%></h6>
             <div class = "row justify-content-around">
@@ -42,8 +41,9 @@
         <div class = "col-md-8">
 
           <div class="card bg-primary mt-3">
-            <div class="form-group">
-                <textarea type="text" onkeydown="limitText(this.form.message,this.form.countdown,160);" onkeyup='limitText(this.form.message,this.form.countdown,160);' id="post_area" class="form-control" placeholder="Type in here!"></textarea>
+            <form class="form-group">
+                <textarea name="message" type="text" onkeydown="limitText(this.message,this.countdown,250);" onkeyup='limitText(this.form.message,this.form.countdown,160);' id="post_area" class="form-control" placeholder="Type in here!"></textarea>
+                <input readonly class="bg-primary" type="text" name="countdown" size="3" value="250"> /250
                 <div class="row">
                   <div class = "container">
                       <div class="col">
@@ -51,15 +51,40 @@
                         <div id="text_remain"></div>
                       </div>
                       <div class="col">
-                          <button type="button" class="btn float-right btn-secondary">Post</button>
- 
+                          <button type="submit" class="btn float-right btn-secondary">Post</button>
                       </div>   
                   </div>
                   
                 </div>
-              </div>
-  
-          </div>
+              </form>
+            </div>    
+            <ul class="list-group mt-5">
+              <% posts.forEach(function(element){%>
+                <li class="list-group-item d-inline-block">
+                  <div class = "row">
+                    <div class= "col">
+                        <!--pic
+                        <img src = "<%=element.image%>" class="rounded-circle border border-primary image-post">-->
+                        <h5 class="d-inline-block"><%=element.name%></h5>
+                        @<%=element.username%>
+                    </div>
+                    <div class="col text-right text-muted">
+                      <%=element.date%>
+                    </div>
+                    </div>
+                    <div class = "row text-left">
+                      <br><%=element.post%>
+                    </div>
+                  </li>
+                    
+                </li>
+                <% });%>
+                <li class="list-group-item">Cras justo odio</li>
+                <li class="list-group-item">Dapibus ac facilisis in</li>
+                <li class="list-group-item">Morbi leo risus</li>
+                <li class="list-group-item">Porta ac consectetur ac</li>
+                <li class="list-group-item">Vestibulum at eros</li>
+            </ul>
         </div>
       </div>
     </div>
@@ -70,20 +95,20 @@
           } else {
             limitCount.value = limitNum - limitField.value.length;
           }
-          $('#text_remain').html(text_remaining + '/250');
+ //         $('#text_remain').html(limitCount.value + '/250');
         }
-      $(document).ready(function() {
-        var text_max = 250;
-        $('#text_remain').html(text_max + '/250');
+//       $(document).ready(function() {
+//         var text_max = 250;
+//         $('#text_remain').html(text_max + '/250');
 
-        $('#post_area').keyup(function() {
-            var text_length = $('#post_area').val().replace(/rn/g, "n").length;
-            console.log(text_length);
-            var text_remaining = text_max - text_length;
+//         // $('#post_area').keyup(function() {
+//         //     var text_length = $('#post_area').val().replace(/rn/g, "n").length;
+//         //     console.log(text_length);
+//         //     var text_remaining = text_max - text_length;
 
-        $('#text_remain').html(text_remaining + '/250');
-    });
-});
+//         // $('#text_remain').html(text_remaining + '/250');
+//     //});
+// });
     </script>
   </body>
 </html>

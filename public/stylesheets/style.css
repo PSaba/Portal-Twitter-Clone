@@ -7,6 +7,9 @@ body {
 a {
   color: #00B7FF;
 }
+.color-background{
+  color: #00B7FF;
+}
 
 .name-contain{
   max-width: 600 px;
@@ -14,6 +17,19 @@ a {
 }
 
 .box{
-  height: 20%;
+  height: 20 px;
   width: 100%;
+}
+
+.image-post{
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 20%;
+}
+
+.blur-box{
+  box-shadow: 10 px, 10 px, 10 px, grey;
 }
