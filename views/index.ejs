@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>PTwitter: <%= username %></title>
+    <title>PTwitter: <%= handle %></title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -24,10 +24,11 @@
     <div class="container">
       <div class = "row">
         <div class = "col-md-4 name-contain ">
-          <div class="card bg-light mt-5 border border-info rounded">
-          <img class="box" src="/images/backimg.png" alt="Card image cap">
+          <div class="card bg-light mt-5 border-top rounded" style="border-top: solid; border-top-width: 30px; border-top-color:#00B7FF; ">
+        <!-- <img class="box" src="/images/backimg.png" alt="Card image cap"> -->
+         <p class="bg-primary text-primary box" style: "height: 100px">you<br>found<br>secret<br>text</p>
             <h2 class="card-title text-center"><%=name%></h5>
-            <h6 class="text-center">@<%=username%></h6>
+            <h6 class="text-center">@<%=handle%></h6>
             <div class = "row justify-content-around">
               <div class = "text-center col-7">
                 Tweets <br> <%=tweets%>
@@ -41,7 +42,7 @@
         <div class = "col-md-8">
 
           <div class="card bg-primary mt-3">
-            <form class="form-group">
+            <form class="form-group" method="POST" action="/posts/postpost/">
                 <textarea name="message" type="text" onkeydown="limitText(this.message,this.countdown,250);" onkeyup='limitText(this.form.message,this.form.countdown,160);' id="post_area" class="form-control" placeholder="Type in here!"></textarea>
                 <input readonly class="bg-primary" type="text" name="countdown" size="3" value="250"> /250
                 <div class="row">
@@ -65,25 +66,20 @@
                     <div class= "col">
                         <!--pic
                         <img src = "<%=element.image%>" class="rounded-circle border border-primary image-post">-->
-                        <h5 class="d-inline-block"><%=element.name%></h5>
-                        @<%=element.username%>
+                        <h5 class="d-inline-block"><%=element.user.name%></h5>
+                        @<%=element.user.handle%>
                     </div>
                     <div class="col text-right text-muted">
                       <%=element.date%>
                     </div>
                     </div>
-                    <div class = "row text-left">
-                      <br><%=element.post%>
+                    <div class = "row text-left pl-4">
+                      <br><%=element.information%>
                     </div>
                   </li>
                     
                 </li>
                 <% });%>
-                <li class="list-group-item">Cras justo odio</li>
-                <li class="list-group-item">Dapibus ac facilisis in</li>
-                <li class="list-group-item">Morbi leo risus</li>
-                <li class="list-group-item">Porta ac consectetur ac</li>
-                <li class="list-group-item">Vestibulum at eros</li>
             </ul>
         </div>
       </div>

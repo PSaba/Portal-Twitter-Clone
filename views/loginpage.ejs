@@ -10,12 +10,18 @@
   
 </head>
 <body>
+    <form method="POST" action="/users/loggedin">
     <div class="form-group card text-center text-light mt-5 pb-5 pr-5 pl-5 pt-2 bg-secondary">
         <h2>Login</h2>
+        <% if(typeof error !== 'undefined'){ %>
+			<div>
+				<h2 style="color:red;"><%= error %></h2>
+			</div>
+		<% } %>
         <br>
-            <input type="text" class="form-control" id="email/username" placeholder="Email/Username">
+            <input type="text" class="form-control" name="emailusername" placeholder="Email/Username">
             <br>
-            <input type="password" class="form-control" id="password" placeholder="Password">
+            <input type="password" class="form-control" name="password" placeholder="Password">
             <br> <br>
             <div class="row">
                 <div class="col">
@@ -27,5 +33,6 @@
                 </div>
             </div>
         </div>
+    </form>
 </body>
 </html>
