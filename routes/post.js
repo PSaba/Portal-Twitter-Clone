@@ -3,22 +3,26 @@ var router = express.Router();
 var userModel = require('../models/user')
 var postModel = require('../models/post')
 var time = require('time');
+var io = require('../io');
 
 /* GET home page. */
 router.post('/postpost', function(req, res) {
-    console.log('this is the body');
-    console.log(req.body);
     var newPost = new postModel({
         user: req.user,
         information: req.body.message,
         date: Date.now(),
     });
+    var io = require('../io');
+    console.log('sending');
+    var socket = io.instance();
+    socket.emit('postmessage', { user: req.user,
+        information: req.body.message,
+        date: Date.now(),}); 
+
     newPost.save(function(err, post){
         if(err) {
             return console.error(err);
         }else {
-            console.log(req.user);
-            console.log(req.user.tweets);
             userModel.update(
                 {handle: req.user.handle}, 
                 {
@@ -32,7 +36,8 @@ router.post('/postpost', function(req, res) {
             );
         };
       });
-  res.redirect('/' + req.user.handle);
+    res.redirect('/' + req.user.handle);
+ res.end();
 });
 
 module.exports = router;

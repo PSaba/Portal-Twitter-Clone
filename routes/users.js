@@ -13,13 +13,9 @@ router.get('/loginpage', function(req, res, next){
 
 router.post('/loggedin', function(req, res, next){
   //console.log(userModel.find());
-  console.log(req.body);
   userModel.findOne({ email: req.body.emailusername.trim(), password: req.body.password.trim()}, function(err, user){
-    console.log('here');
     if (!user) {
       userModel.findOne({ username: req.body.emailusername.trim(), password: req.body.password.trim()}, function(err, user){
-        console.log('here2');
-        console.log(user);
         if (!user) {
           res.render('loginpage', { error: 'Invalid email/username or password.' });
         } else {
@@ -30,14 +26,37 @@ router.post('/loggedin', function(req, res, next){
         }
       });
     } else {
-      console.log(user);
         req.user = user;
         delete req.user.password; // delete the password from the session
         req.session.user = user;
         res.redirect('/' + user.handle);
     }
   });
+  console.log(req.user);
 });
+
+router.get('/profilepage', function(req, res, next){
+  userModel.find({}, function(err, allUsers){
+  postModel.find({user: req.user}, function(err, postsdone){
+    userModel.findOne({handle: req.params.page}, function(err, pagetemp){
+      if(pagetemp){
+        res.render('profile', { title: pagetemp.title, 
+          name: pagetemp.name, username: pagetemp.username, handle: pagetemp.handle, tweets: pagetemp.tweets, followers: pagetemp.followers,
+          followpot: allUsers, following: pagetemp.user.following, posts: postsdone});
+      } else{
+        if(err){
+          console.log(err);
+        }
+        res.render('profile', { title: 'error', 
+          name: 'error', username: 'error', handle: 'error', tweets: 'error', followers: 'error',
+          posts: [{name: "hi", username: "wellthen", date: "July 30", post: "what????", image: "/images/backimg.png"}]});
+      }
+    });
+  });
+  });
+
+});
+
 router.get('/signuppage', function(req, res, next){
   res.render('signuppage');
 });
@@ -52,7 +71,8 @@ router.post('/signedup', function(req, res, next){
         email: req.body.email.trim(),
         password: req.body.password1.trim(),
         tweets: 0,
-        followers: 0
+        followers: new Array(),
+        following: new Array(),
       });
       newUser.save(function(err, page){
         if(err) res.render('signuppage', {error: 'Theres a mistake. Please try again'});
