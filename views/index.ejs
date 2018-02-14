@@ -33,7 +33,7 @@
         <!-- <img class="box" src="/images/backimg.png" alt="Card image cap"> -->
          <p class="bg-primary text-primary box" style: "height: 100px">you<br>found<br>secret<br>text</p>
             <h2 class="card-title text-center"><%=name%></h5>
-            <h6 class="text-center">@<%=handle%></h6>
+            <h6 class="text-center text-handle">@<%=handle%></h6>
             <div class = "row justify-content-around">
               <div class = "text-center col-7">
                 Tweets <br> <%=tweets%>
@@ -48,7 +48,7 @@
 
           <div class="card bg-primary mt-3">
             <form class="form-group" id="twitter-post" method="POST" action="/posts/postpost/">
-                <textarea name="message" type="text" onkeydown="limitText(this.message,this.countdown,250);" onkeyup='limitText(this.form.message,this.form.countdown,160);' id="post_area" class="form-control sending" placeholder="Type in here!"></textarea>
+                <textarea name="message" type="text" onkeydown="limitText(this.message,this.countdown,250);" onkeyup='limitText(this.form.message,this.form.countdown,250);' id="post_area" class="form-control sending" placeholder="Type in here!"></textarea>
                 <input readonly class="bg-primary" type="text" name="countdown" size="3" value="250"> /250
                 <div class="row">
                   <div class = "container">
@@ -90,10 +90,28 @@
     <script>
        	$(function(){
           var socket = io();
-          // $('#twitter-post').submit(function(e){
-          //   console.log('sending');
-          //   socket.emit('postmessage', {message: $('.sending').val(), user: req.user, time: Date.now() }) 
+
+          // var nsp = io.of('/' + $('text-handle').val());
+          // nsp.on('connection', function(socket){
+          //   console.log('someone connected');
           // });
+          // nsp.emit('hi', 'everyone!');
+
+          // .forEach(element => {
+          //   io.on('connection', function(socket){
+          //     oi.join(element.handle);
+          //   })
+          //   $('#twitter-post').submit(function(e){
+          //   console.log('sending');
+          //  // socket.emit('postmessage', {message: $('.sending').val(), user: req.user, time: Date.now() }) 
+          //   io.on('connection', function(socket){
+          //       socket.on($('text-handle').val(), function(id, msg){
+          //         socket.broadcas.to(id).emit({message: $('.sending').val(), user: req.user, time: Date.now() }, msg);
+          //       });
+          //   });
+          // });
+          // });
+
           // $('#btn-sending').on('click', function(e){
           //   console.log('sending');
           //   socket.emit('postmessage', {message: $('.sending').val(), user: req.user, time: Date.now() }) 

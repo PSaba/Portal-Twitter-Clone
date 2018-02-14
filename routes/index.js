@@ -34,12 +34,13 @@ router.get('/', function(req, res, next) {
 
 router.get('/:page', function(req, res) {
   if(req.user){
+    userModel.find({}, function(err, allUsers){
     postModel.find({'user.handle': req.user.handle}, function(err, postsdone){
     userModel.findOne({handle: req.params.page}, function(err, pagetemp){
       if(pagetemp){
         res.render('index', { title: pagetemp.title, 
           name: pagetemp.name, username: pagetemp.username, handle: pagetemp.handle, tweets: pagetemp.tweets, followers: pagetemp.followers,
-          posts: postsdone, following: req.user.following, reqhandle: req.user.handle});
+          posts: postsdone, following: req.user.following, reqhandle: req.user.handle, potfol: allUsers});
       } else{
         if(err){
           console.log(err);
@@ -49,6 +50,7 @@ router.get('/:page', function(req, res) {
           posts: [{name: "hi", username: "wellthen", date: "July 30", post: "what????", image: "/images/backimg.png"}]});
       }
     });
+  });
   });
 
   } else{

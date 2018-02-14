@@ -14,9 +14,15 @@ router.post('/postpost', function(req, res) {
     });
     var io = require('../io');
     var socket = io.instance();
-    socket.emit('postmessage', { user: req.user,
-        information: req.body.message,
-        date: Date.now(),}); 
+    // socket.emit('postmessage', { user: req.user,
+    //     information: req.body.message,
+    //     date: Date.now(),}); 
+    socket.to(req.body.handle).emit({message: req.body.message, user: req.user, time: Date.now() });
+    // io.on('connection', function(socket){
+    //     socket.on(req.user.handle, function(id, msg){
+    //         socket.broadcas.to(id).emit({message: req.body.message, user: req.user, time: Date.now() }, msg);
+    //     });
+    // });
 
     newPost.save(function(err, post){
         if(err) {
@@ -25,9 +31,6 @@ router.post('/postpost', function(req, res) {
             userModel.update(
                 {handle: req.user.handle}, 
                 {
-                    "$set": {
-                        "handle": 'changed'
-                    },
                     $inc: {
                         tweets: 1
                     }

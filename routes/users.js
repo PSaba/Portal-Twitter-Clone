@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 userModel = require('../models/user');
 var postModel = require('../models/post');
+var bcrypt = require('bcrypt');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -36,8 +37,9 @@ router.post('/loggedin', function(req, res, next){
   console.log(req.user);
 });
 
-router.get('/profilepage/:page', function(req, res, next){
-  userModel.find({}, function(err, allUsers){
+router.get('/profilepage/:page', function(req, res){
+  if(req.user){
+      userModel.find({}, function(err, allUsers){
     userModel.findOne({handle: req.params.page}, function(err, pagetemp){
   postModel.find({}, function(err, postsdone){
       if(pagetemp){
@@ -55,6 +57,10 @@ router.get('/profilepage/:page', function(req, res, next){
     });
   });
   });
+  } else{
+    res.redirect('/users/loginpage');
+  }
+
 
 });
 

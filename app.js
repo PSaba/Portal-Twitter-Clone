@@ -13,16 +13,10 @@ var posts = require('./routes/post');
 
 var app = express();
 
+var session1 = require('./session');
 //check user session
-app.use(session({
-  cookieName: 'session',
-  secret: 'eg[isfd-8yF9-7w2315df{}+Ijsli;;to8',
-  duration: 30 * 60 * 1000,
-  activeDuration: 5 * 60 * 1000,
-  httpOnly: true,
-  secure: true,
-  ephemeral: true
-}));
+app.use(
+session(session1));
 
 app.use(function(req, res, next) {
   if (req.session && req.session.user) {
