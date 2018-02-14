@@ -10,7 +10,7 @@
     <title>Login</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel='stylesheet' href='/stylesheets/style.css' />
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   
@@ -22,19 +22,21 @@
                     <li class="nav-item active">
                       <a class="nav-link" href = "/">Home</a>
                     </li>
+                    <li class="nav-item active">
+                      <a class="btn btn-secondary" href="/users/profilepage/<%=handle%>" role="button">Profile Page</a>
+                    </li>
                   </ul>
                 </div>
                 <span class="navbar-test">
-                    <button type="button" class="btn btn-secondary">Tweet</button>
+                    <a  role="button" href="/<%=handle%>" class="btn btn-secondary">Tweet</a>
                   </span>
               </nav>
               <div class="container">
                 <div class = "row">
                   <div class = "col-md-4 name-contain ">
                     <div class="card bg-light mt-5 border-top rounded" style="border-top: solid; border-top-width: 30px; border-top-color:#00B7FF; ">
-                  <!-- <img class="box" src="/images/backimg.png" alt="Card image cap"> -->
                    <p class="bg-primary text-primary box" style: "height: 100px">you<br>found<br>secret<br>text</p>
-                      <h2 class="card-title text-center"><%=name%></h5>
+                      <h2 class="card-title text-center"><a href = "/users/profilepage/<%=handle%>"><%=name%></a></h5>
                       <h6 class="text-center">@<%=handle%></h6>
                       <div class = "row justify-content-around">
                         <div class = "text-center col-7">
@@ -45,33 +47,31 @@
                         </div>
                     </div>
                    </div>
-                   <% followpot.ForEach(function(element){ %>
-                    
-                    <%});%>
+                   <br>
+                   <% if (reqHandle == handle){ %>
+                   <h2 class="text-primary text-center">Potential Followers</h2>
+                   <ul class="list-group">
+                      <% followpot.forEach(function(element){ %>
+                        <% if((! following.includes(element)) && (element.handle != handle) ){ %>
+                        <li class="list-group-item">
+                          <div class="row">
+                            <div class="col">
+                                <h5 class="d-inline-block"><a href = "/users/profilepage/<%=element.handle%>"><%=element.name%></a></h5>
+                                @<%=element.handle%>
+                            </div>
+                          </div>
+                          <input type="button" value="Follow" class="btn-follow btn btn-primary" data-person-id="<%=element.handle%>"/>
+                        </li>
+                        <% }; %>
+                        <%});%>
+                        <% }; %>
+                   </ul>
 
                   </div>
                   <div class = "col-md-8">
-          
-                    <div class="card bg-primary mt-3">
-                      <form class="form-group" method="POST" action="/posts/postpost/">
-                          <textarea name="message" type="text" onkeydown="limitText(this.message,this.countdown,250);" onkeyup='limitText(this.form.message,this.form.countdown,160);' id="post_area" class="form-control sending" placeholder="Type in here!"></textarea>
-                          <input readonly class="bg-primary" type="text" name="countdown" size="3" value="250"> /250
-                          <div class="row">
-                            <div class = "container">
-                                <div class="col">
-                                  <br>
-                                  <div id="text_remain"></div>
-                                </div>
-                                <div class="col">
-                                    <button type="submit" class="btn button-send float-right btn-secondary">Post</button>
-                                </div>   
-                            </div>
-                            
-                          </div>
-                        </form>
-                      </div>    
                       <ul class="list-group mt-5" name="messages">
                         <% posts.forEach(function(element){%>
+                          <% if(element.user.handle == handle){ %>
                           <li class="list-group-item d-inline-block">
                             <div class = "row">
                               <div class= "col">
@@ -90,10 +90,24 @@
                             </li>
                               
                           </li>
+                          <% }; %>
                           <% });%>
                       </ul>
                   </div>
                 </div>
               </div>
+    <script>
+      $('.btn-follow').on('click', function(e){
+          var button = $(this);
+          var followHandle = $(this).attr('data-person-id');
+          $.ajax({
+            Method: 'GET',
+            url: '/users/addfollower/' + followHandle,
+      //      data: followHandle
+          }).done(function(response){
+            button.parent.remove();
+          });
+        });
+    </script>
 </body>
 </html>

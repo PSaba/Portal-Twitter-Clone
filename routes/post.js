@@ -13,7 +13,6 @@ router.post('/postpost', function(req, res) {
         date: Date.now(),
     });
     var io = require('../io');
-    console.log('sending');
     var socket = io.instance();
     socket.emit('postmessage', { user: req.user,
         information: req.body.message,

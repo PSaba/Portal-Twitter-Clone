@@ -32,13 +32,14 @@ router.get('/', function(req, res, next) {
 
 // });
 
-router.get('/:page', function(req, res, next) {
-  postModel.find({'user.handle': req.user.handle}, function(err, postsdone){
+router.get('/:page', function(req, res) {
+  if(req.user){
+    postModel.find({'user.handle': req.user.handle}, function(err, postsdone){
     userModel.findOne({handle: req.params.page}, function(err, pagetemp){
       if(pagetemp){
         res.render('index', { title: pagetemp.title, 
           name: pagetemp.name, username: pagetemp.username, handle: pagetemp.handle, tweets: pagetemp.tweets, followers: pagetemp.followers,
-          posts: postsdone});
+          posts: postsdone, following: req.user.following, reqhandle: req.user.handle});
       } else{
         if(err){
           console.log(err);
@@ -50,6 +51,10 @@ router.get('/:page', function(req, res, next) {
     });
   });
 
+  } else{
+    res.redirect('/users/loginpage');
+  }
+  
 });
 
 module.exports = router;

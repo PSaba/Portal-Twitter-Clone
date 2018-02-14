@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-userModel = require('../models/user')
+userModel = require('../models/user');
+var postModel = require('../models/post');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -35,14 +36,14 @@ router.post('/loggedin', function(req, res, next){
   console.log(req.user);
 });
 
-router.get('/profilepage', function(req, res, next){
+router.get('/profilepage/:page', function(req, res, next){
   userModel.find({}, function(err, allUsers){
-  postModel.find({user: req.user}, function(err, postsdone){
     userModel.findOne({handle: req.params.page}, function(err, pagetemp){
+  postModel.find({}, function(err, postsdone){
       if(pagetemp){
         res.render('profile', { title: pagetemp.title, 
           name: pagetemp.name, username: pagetemp.username, handle: pagetemp.handle, tweets: pagetemp.tweets, followers: pagetemp.followers,
-          followpot: allUsers, following: pagetemp.user.following, posts: postsdone});
+          followpot: allUsers, following: pagetemp.following, posts: postsdone, reqHandle: req.user.handle});
       } else{
         if(err){
           console.log(err);
@@ -82,5 +83,20 @@ router.post('/signedup', function(req, res, next){
   } else{
     res.render('signuppage', {error: 'Passwords dont match'});
   }
+});
+
+router.get('/addfollower/:page', function(req, res){
+  var updateTo;
+  userModel.findOne({handle: req.params.page}, function(err, person){
+    updateTo = req.user.following.push(person);
+  });
+  userModel.findOneAndUpdate({handle: req.user.handle}, 
+    {
+      $set: {
+        "following": updateTo
+      }, function(err, page){}
+    }
+  )
+
 });
 module.exports = router;
