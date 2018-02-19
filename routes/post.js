@@ -17,12 +17,14 @@ router.post('/postpost', function(req, res) {
     // socket.emit('postmessage', { user: req.user,
     //     information: req.body.message,
     //     date: Date.now(),}); 
-    socket.to(req.body.handle).emit({message: req.body.message, user: req.user, time: Date.now() });
+   // console.log(req.user.handle);
+    socket.to(req.user.handle).emit('postmessage', {message: req.body.message, user: req.user, time: Date.now()});
     // io.on('connection', function(socket){
     //     socket.on(req.user.handle, function(id, msg){
     //         socket.broadcas.to(id).emit({message: req.body.message, user: req.user, time: Date.now() }, msg);
     //     });
-    // });
+    // })
+    console.log('sent');
 
     newPost.save(function(err, post){
         if(err) {

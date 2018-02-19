@@ -3,6 +3,7 @@ var router = express.Router();
 userModel = require('../models/user');
 var postModel = require('../models/post');
 var bcrypt = require('bcrypt');
+var io = require('../io');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -15,31 +16,51 @@ router.get('/loginpage', function(req, res, next){
 
 router.post('/loggedin', function(req, res, next){
   //console.log(userModel.find());
-  userModel.findOne({ email: req.body.emailusername.trim(), password: req.body.password.trim()}, function(err, user){
-    if (!user) {
-      userModel.findOne({ username: req.body.emailusername.trim(), password: req.body.password.trim()}, function(err, user){
-        if (!user) {
-          res.render('loginpage', { error: 'Invalid email/username or password.' });
-        } else {
-            req.user = user;
-            delete req.user.password; // delete the password from the session
-            req.session.user = user;
-            res.redirect('/' + user.handle);
+  console.log(req.body);
+  var handle;
+  
+  userModel.findOne({ email: req.body.emailusername.trim()}, function(err, user){
+      if (!user) {
+        userModel.findOne({ username: req.body.emailusername.trim()}, function(err, user){
+        if (user) {
+            bcrypt.compare(req.body.password, user.password, function(err, rest) {
+              if(rest){
+                req.user = user;
+                delete req.user.password; // delete the password from the session
+                req.session.user = user;
+                handle = user.handle;
+                io.login();
+                res.redirect('/' + user.handle);
+              } else {
+                res.render('loginpage', { error: 'Invalid username/password combination'});
+              }
+            });
+
+          } else {
+            res.render('loginpage', { error: 'Invalid username/password combination'});
+          }
+        });   
+    } else {
+      bcrypt.compare(req.body.password, user.password, function(err, rest) {
+        if(rest){
+          req.user = user;
+          delete req.user.password; // delete the password from the session
+          req.session.user = user;
+          handle = user.handle;
+          res.redirect('/' + user.handle);
+          io.login();
+        } 
+        else {
+          res.render('loginpage', { error: 'Invalid username/password combination'});
         }
       });
-    } else {
-        req.user = user;
-        delete req.user.password; // delete the password from the session
-        req.session.user = user;
-        res.redirect('/' + user.handle);
     }
   });
-  console.log(req.user);
 });
 
 router.get('/profilepage/:page', function(req, res){
   if(req.user){
-      userModel.find({}, function(err, allUsers){
+      userModel.find({}, {handle: 1, username: 1, name: 1, _id: 0}, function(err, allUsers){
     userModel.findOne({handle: req.params.page}, function(err, pagetemp){
   postModel.find({}, function(err, postsdone){
       if(pagetemp){
@@ -68,24 +89,26 @@ router.get('/signuppage', function(req, res, next){
   res.render('signuppage');
 });
 
+const saltRounds = 10;
 router.post('/signedup', function(req, res, next){
-  console.log(req.body);
   if(req.body.password1 == req.body.password2){
-      var newUser = new userModel({
+    bcrypt.hash(req.body.password1, saltRounds, function(err, hash) {
+        var newUser = new userModel({
         name: req.body.name.trim(),
         username: req.body.username.trim(),
         handle: req.body.handle.trim(),
         email: req.body.email.trim(),
-        password: req.body.password1.trim(),
+        password: hash,
         tweets: 0,
         followers: new Array(),
         following: new Array(),
       });
       newUser.save(function(err, page){
-        if(err) res.render('signuppage', {error: 'Theres a mistake. Please try again'});
-      });
-      console.log(req.session);
-      res.redirect('/');
+        if(err) {
+          res.render('signuppage', {error: 'Theres a mistake. Please try again'});
+        }
+        else {res.redirect('/' + req.body.handle.trim());}
+    });});
   } else{
     res.render('signuppage', {error: 'Passwords dont match'});
   }
@@ -93,16 +116,44 @@ router.post('/signedup', function(req, res, next){
 
 router.get('/addfollower/:page', function(req, res){
   var updateTo;
+  console.log('adding follower');
   userModel.findOne({handle: req.params.page}, function(err, person){
     updateTo = req.user.following.push(person);
-  });
   userModel.findOneAndUpdate({handle: req.user.handle}, 
     {
-      $set: {
-        "following": updateTo
-      }, function(err, page){}
+      $addToSet: {
+        following: {
+          handle: person.handle,
+          username: person.username,
+          name: person.name
+        }
+      }
+    }, function(err, page){
+      console.log(page);
     }
   )
-
 });
+  io.instance().join(person.handle);
+  });
+
+  router.get('/removefollower/:page', function(req, res){
+    var updateTo;
+    console.log('removing follower');
+    userModel.findOne({handle: req.params.page}, function(err, person){
+      updateTo = req.user.following.push(person);
+    userModel.findOneAndUpdate({handle: req.user.handle}, 
+      {
+        $pull: {
+          following: {
+            handle: person.handle,
+          }
+        }
+      }, function(err, page){
+        console.log(page);
+      }
+    )
+  });
+  io.instance().leave(person.handle);
+    });
+
 module.exports = router;

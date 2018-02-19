@@ -7,16 +7,28 @@ var cookietemp = require('cookie');
 
 module.exports = {init: function(server){
         io = require('socket.io')(server);
-        io.on('connection', function(socket){
-            console.log('a user connected');
-        });	
-}, instance: function(){ 
-        io.on('connection', function(socket){
-            var cookie = socket.request.headers.cookie;
-            cookie = cookietemp.parse(cookie);
-            var opts = sesh;
-            cookie = session.util.decode(opts, cookie.session);
-                console.log(cookie);
-        });	
+}, 
+login: function(){
+    io.on('connection', function(socket){
+        console.log('user connected');
+        var cookie = socket.request.headers.cookie;
+        cookie = cookietemp.parse(cookie);
+        var opts = sesh;
+        cookie = session.util.decode(opts, cookie.session);
+        userModel.findOne({ 
+            handle: cookie.content.user.handle}, 
+            function(err, user){
+                if(err){
+                    console.log(err);
+                } else {
+                    user.following.forEach(element => {
+                        console.log(element.handle);
+                        socket.join(element.handle);
+                    });
+                }
+            });
+        });
+}
+, instance: function(){ 
         return io}
 };

@@ -1,4 +1,6 @@
 var mongoose = require('mongoose');
+var bcrypt = require('bcrypt');
+
 
 var schema = mongoose.Schema({
     name: {type: String, required: true},
@@ -9,6 +11,16 @@ var schema = mongoose.Schema({
     tweets: {type:Number, required: true},
     following: {type: Array, required: true},
     followers: {type: Array, required: true}
-})
+});
+
+schema.methods.checkPassword = function(password){
+    return bcrypt.compare(password, this.password)
+};
+
+var salt = 10;
+
+schema.statics.hashPassword = function(password){
+    return bcrypt.hashSync(password, salt);
+};
 
 module.exports = mongoose.model('users', schema);

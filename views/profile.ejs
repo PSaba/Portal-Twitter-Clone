@@ -10,7 +10,7 @@
     <title>Login</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel='stylesheet' href='/stylesheets/style.css' />
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   
@@ -20,7 +20,7 @@
                 <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
                   <ul class = "navbar-nav">
                     <li class="nav-item active">
-                      <a class="nav-link" href = "/">Home</a>
+                      <a class="nav-link" href = "/<%=handle%>">Home</a>
                     </li>
                     <li class="nav-item active">
                       <a class="btn btn-secondary" href="/users/profilepage/<%=handle%>" role="button">Profile Page</a>
@@ -43,16 +43,18 @@
                           Tweets <br> <%=tweets%>
                         </div>
                         <div class = "text-center col">
-                          Followers <br> <%=followers%>
+                          Following <br> <%=following.length%>
                         </div>
-                    </div>
+                    </div> 
                    </div>
                    <br>
                    <% if (reqHandle == handle){ %>
                    <h2 class="text-primary text-center">Potential Followers</h2>
                    <ul class="list-group">
                       <% followpot.forEach(function(element){ %>
-                        <% if((! following.includes(element)) && (element.handle != handle) ){ %>
+                        element<%=element%>
+                        <% if(!( following.includes(element) || (element.handle == handle) )){ %>
+                          <%=following.includes(element)%>
                         <li class="list-group-item">
                           <div class="row">
                             <div class="col">
@@ -64,8 +66,28 @@
                         </li>
                         <% }; %>
                         <%});%>
+                      </ul>
+                      <h2 class="text-primary text-center">Following</h2>
+                      <ul class="list-group">
+                         <% followpot.forEach(function(element){ %>
+                           <%=element%>
+                           <% if(!( following.includes(element) || (element.handle == handle) )){ %>
+                           <li class="list-group-item">
+                             <div class="row">
+                               <div class="col">
+                                   <h5 class="d-inline-block"><a href = "/users/profilepage/<%=element.handle%>"><%=element.name%></a></h5>
+                                   @<%=element.handle%>
+                               </div>
+                             </div>
+                             <input type="button" value="Unfollow" class="btn-unfollow btn btn-primary" data-person-id="<%=element.handle%>"/>
+                           </li>
+                           <% }; %>
+                           <%});%>
+                         </ul>
+
+
+
                         <% }; %>
-                   </ul>
 
                   </div>
                   <div class = "col-md-8">
@@ -97,17 +119,34 @@
                 </div>
               </div>
     <script>
+      $(function(){
       $('.btn-follow').on('click', function(e){
-          var button = $(this);
-          var followHandle = $(this).attr('data-person-id');
-          $.ajax({
-            Method: 'GET',
-            url: '/users/addfollower/' + followHandle,
-      //      data: followHandle
-          }).done(function(response){
-            button.parent.remove();
-          });
-        });
+                var button = $(this);
+                console.log(button);
+                var followHandle = $(this).attr('data-person-id');
+                $.ajax({
+                  Method: 'GET',
+                  url: '/users/addfollower/' + followHandle,
+            //      data: followHandl e
+                }).done(function(response){
+                  console.log(button);
+                  button.closest('li').css( "background-color", "red" );;
+                  button.closest('li').remove();
+                });
+              });
+              $('.btn-unfollow').on('click', function(e){
+                var button = $(this);
+                var followHandle = $(this).attr('data-person-id');
+                $.ajax({
+                  Method: 'GET',
+                  url: '/users/removefollower/' + followHandle,
+            //      data: followHandle
+                }).done(function(response){
+                  button.closest('li').remove();
+                });
+              });
+      });
+      
     </script>
 </body>
 </html>
