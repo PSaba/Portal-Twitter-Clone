@@ -130,10 +130,13 @@ router.get('/addfollower/:page', function(req, res){
       }
     }, function(err, page){
       console.log(page);
+      io.instance().on('connection', function(err, socket){
+        socket.join(person.handle);
+      })
     }
   )
 });
-  io.instance().join(person.handle);
+  res.send('added follower');
   });
 
   router.get('/removefollower/:page', function(req, res){
@@ -148,12 +151,15 @@ router.get('/addfollower/:page', function(req, res){
             handle: person.handle,
           }
         }
-      }, function(err, page){
-        console.log(page);
+      }, function(err, person){
+        console.log(person);
+        io.instance().on('connection', function(err, socket){
+          socket.leave(person.handle);
+        })
       }
     )
   });
-  io.instance().leave(person.handle);
+  res.send('removed follower');
     });
 
 module.exports = router;

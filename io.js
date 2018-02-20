@@ -23,7 +23,9 @@ login: function(){
                 } else {
                     user.following.forEach(element => {
                         console.log(element.handle);
-                        socket.join(element.handle);
+                        if(socket.rooms.indexOf(element.handle) < 0){
+                            socket.join(element.handle);
+                        }
                     });
                 }
             });

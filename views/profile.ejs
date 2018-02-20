@@ -16,21 +16,22 @@
   
 </head>
 <body>
-        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
-                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-                  <ul class = "navbar-nav">
-                    <li class="nav-item active">
-                      <a class="nav-link" href = "/<%=handle%>">Home</a>
-                    </li>
-                    <li class="nav-item active">
-                      <a class="btn btn-secondary" href="/users/profilepage/<%=handle%>" role="button">Profile Page</a>
-                    </li>
-                  </ul>
-                </div>
-                <span class="navbar-test">
-                    <a  role="button" href="/<%=handle%>" class="btn btn-secondary">Tweet</a>
-                  </span>
-              </nav>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+          <ul class = "navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href = "/">Home</a>
+            </li>
+            <li class="nav-item active">
+              <a class="btn btn-secondary" href="/users/loginpage" role="button">Login to New Account</a>
+              <a class="btn btn-secondary" href="/users/profilepage/<%=handle%>" role="button">Profile Page</a>
+            </li>
+          </ul>
+        </div>
+        <span class="navbar-test">
+            <a  role="button" href="/<%=handle%>" class="btn btn-secondary">Tweet</a>
+          </span>
+      </nav>
               <div class="container">
                 <div class = "row">
                   <div class = "col-md-4 name-contain ">
@@ -50,9 +51,9 @@
                    <br>
                    <% if (reqHandle == handle){ %>
                    <h2 class="text-primary text-center">Potential Followers</h2>
-                   <ul class="list-group">
+                   <ul class="list-group"name = "potfol">
                       <% followpot.forEach(function(element){ %>
-                        element<%=element%>
+                        <%=element%>
                         <% if(!( following.includes(element) || (element.handle == handle) )){ %>
                           <%=following.includes(element)%>
                         <li class="list-group-item">
@@ -62,16 +63,14 @@
                                 @<%=element.handle%>
                             </div>
                           </div>
-                          <input type="button" value="Follow" class="btn-follow btn btn-primary" data-person-id="<%=element.handle%>"/>
+                          <input type="button" value="Follow" class="btn-follow btn btn-primary" data-person-id="<%=element.handle%>" data-person-name="<%=element.name%>"/>
                         </li>
                         <% }; %>
                         <%});%>
                       </ul>
                       <h2 class="text-primary text-center">Following</h2>
-                      <ul class="list-group">
-                         <% followpot.forEach(function(element){ %>
-                           <%=element%>
-                           <% if(!( following.includes(element) || (element.handle == handle) )){ %>
+                      <ul class="list-group" name="follows" id = "follows" value = "follows">
+                         <% following.forEach(function(element){ %>
                            <li class="list-group-item">
                              <div class="row">
                                <div class="col">
@@ -79,15 +78,11 @@
                                    @<%=element.handle%>
                                </div>
                              </div>
-                             <input type="button" value="Unfollow" class="btn-unfollow btn btn-primary" data-person-id="<%=element.handle%>"/>
+                             <input type="button" value="Unfollow" class="btn-unfollow btn btn-primary" data-person-id="<%=element.handle%>" data-person-name="<%=element.name%>"/>
                            </li>
-                           <% }; %>
-                           <%});%>
+                           <% }); %>
+                           <%};%>
                          </ul>
-
-
-
-                        <% }; %>
 
                   </div>
                   <div class = "col-md-8">
@@ -120,32 +115,48 @@
               </div>
     <script>
       $(function(){
-      $('.btn-follow').on('click', function(e){
+              $('.btn-follow').on('click', function(e){
                 var button = $(this);
                 console.log(button);
                 var followHandle = $(this).attr('data-person-id');
+                var name = $(this).attr('data-person-name');
                 $.ajax({
                   Method: 'GET',
                   url: '/users/addfollower/' + followHandle,
-            //      data: followHandl e
+            //      data: followHandle
                 }).done(function(response){
-                  console.log(button);
-                  button.closest('li').css( "background-color", "red" );;
                   button.closest('li').remove();
-                });
+                  $('#follows').prepend('<li class="list-group-item"><div class="row"><div class="col"><h5 class="d-inline-block"><a href = "/users/profilepage/'+ followHandle.toString() +'">' + name.toString() + '</a></h5>@' + followHandle.toString() + '</div></div><input type="button" value="Unfollow" class="btn-unfollow btn btn-primary" data-person-id='+ followHandle.toString() +'/></li>'); 
+                //  var inputbutton = document.createElement("input");
+
+                 // $('#following').prepend()
               });
               $('.btn-unfollow').on('click', function(e){
                 var button = $(this);
+                console.log(button);
                 var followHandle = $(this).attr('data-person-id');
+                var name = $(this).attr('data-person-name');
                 $.ajax({
                   Method: 'GET',
                   url: '/users/removefollower/' + followHandle,
             //      data: followHandle
                 }).done(function(response){
                   button.closest('li').remove();
-                });
+                  $('potfol').prepend('<li class="list-group-item"><div class="row"><div class="col"><h5 class="d-inline-block"><a href = "/users/profilepage/'+ followHandle.toString() +'">' + name.toString() + '</a></h5>@' + followHandle.toString() + '</div></div><input type="button" value="Follow" class="btn-follow btn btn-primary" data-person-id='+ followHandle.toString() +'/></li>'); 
+                //   $('#potfol').prepend(""<li class="list-group-item">
+                //              <div class="row">
+                //                <div class="col">
+                //                    <h5 class="d-inline-block"><a href = "/users/profilepage/
+                //                     " + followHandle + ">" + name + "</a></h5>
+                //                    @" + followHandle + "
+                //                </div>
+                //              </div>
+                //              <input type="button" value="Follow" class="btn-follow btn btn-primary" data-person-id=" + followHandle/>
+                //            </li>");
+              });
               });
       });
+    });
       
     </script>
 </body>

@@ -14,7 +14,7 @@
           <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
             <ul class = "navbar-nav">
               <li class="nav-item active">
-                <a class="nav-link" href = "/<%=handle%>">Home</a>
+                <a class="nav-link" href = "/<%=reqhandle%>">Home</a>
               </li>
               <li class="nav-item active">
                 <a class="btn btn-secondary" href="/users/loginpage" role="button">Login to New Account</a>
@@ -64,8 +64,8 @@
                 </div>
               </form>
             </div>    
-            <ul class="list-group mt-5" name="messages">
-              <% posts.forEach(function(element){%>
+            <ul class="list-group mt-5" name="messages" id="messages">
+              <% posts.reverse().forEach(function(element){%>
                 <li class="list-group-item d-inline-block">
                   <div class = "row">
                     <div class= "col">
@@ -80,8 +80,6 @@
                       <br><%=element.information%>
                     </div>
                   </li>
-                    
-                </li>
                 <% });%>
             </ul>
         </div>
@@ -120,6 +118,7 @@
           socket.on('postmessage', function(msg){
             console.log('message sent');
             console.log(msg.message);
+            $('#messages').prepend('<li class="list-group-item d-inline-block"><div class = "row"><div class= "col"><h5 class="d-inline-block"><a href = "/users/profilepage/'+ msg.user.handle + '">'+ msg.user.name +'</a></h5>@'+ msg.user.handle +'</div><div class="col text-right text-muted">Now</div></div><div class = "row text-left pl-4"><br>'+ msg.message + '</div></li>');
         });
       });
       
