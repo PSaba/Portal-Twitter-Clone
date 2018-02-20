@@ -53,7 +53,6 @@
                    <h2 class="text-primary text-center">Potential Followers</h2>
                    <ul class="list-group"name = "potfol">
                       <% followpot.forEach(function(element){ %>
-                        <%=element%>
                         <% if(!( following.includes(element) || (element.handle == handle) )){ %>
                           <%=following.includes(element)%>
                         <li class="list-group-item">
