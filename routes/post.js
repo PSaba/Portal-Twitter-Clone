@@ -34,9 +34,9 @@ router.post('/postpost', function(req, res) {
                 {handle: req.user.handle}, 
                 {
                     $inc: {
-                        tweets: 1
+                        tweets: 1,
                     }
-                }
+                }, function(err, page){}
             );
         };
       });

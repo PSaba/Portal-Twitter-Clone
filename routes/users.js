@@ -14,6 +14,12 @@ router.get('/loginpage', function(req, res, next){
   res.render('loginpage');
 });
 
+router.post('/logout', function(req, res){
+  req.session.reset();
+  req.user = null;
+  req.redirect('/users/loginpage');
+});
+
 router.post('/loggedin', function(req, res, next){
   //console.log(userModel.find());
   console.log(req.body);
@@ -59,14 +65,22 @@ router.post('/loggedin', function(req, res, next){
 });
 
 router.get('/profilepage/:page', function(req, res){
+  io.login();
   if(req.user){
+   // var usersSend = new Set();
       userModel.find({}, {handle: 1, username: 1, name: 1, _id: 0}, function(err, allUsers){
+        usersSend = allUsers;
+        // req.user.following.forEach(element => {
+        //   usersSend.delete(element);
+        // });
+        console.log(usersSend);
     userModel.findOne({handle: req.params.page}, function(err, pagetemp){
-  postModel.find({}, function(err, postsdone){
+  postModel.find({"user.handle": req.user.handle}, function(err, postsdone){
+    
       if(pagetemp){
         res.render('profile', { title: pagetemp.title, 
           name: pagetemp.name, username: pagetemp.username, handle: pagetemp.handle, tweets: pagetemp.tweets, followers: pagetemp.followers,
-          followpot: allUsers, following: pagetemp.following, posts: postsdone, reqHandle: req.user.handle});
+          followpot: usersSend, following: pagetemp.following, posts: postsdone, reqHandle: req.user.handle});
       } else{
         if(err){
           console.log(err);

@@ -25,6 +25,7 @@
             <li class="nav-item active">
               <a class="btn btn-secondary" href="/users/loginpage" role="button">Login to New Account</a>
               <a class="btn btn-secondary" href="/users/profilepage/<%=handle%>" role="button">Profile Page</a>
+              <a class="btn btn-secondary" href="/users/logout" role="button">Log Out</a>
             </li>
           </ul>
         </div>
@@ -54,7 +55,6 @@
                    <ul class="list-group"name = "potfol">
                       <% followpot.forEach(function(element){ %>
                         <% if(!( following.includes(element) || (element.handle == handle) )){ %>
-                          <%=following.includes(element)%>
                         <li class="list-group-item">
                           <div class="row">
                             <div class="col">

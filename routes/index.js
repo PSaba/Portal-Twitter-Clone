@@ -47,11 +47,25 @@ router.get('/:page', function(req, res) {
     userModel.find({}, function(err, allUsers){
     postModel.find({}, function(err, postsdone){
     userModel.findOne({handle: req.params.page}, function(err, pagetemp){
+      var postsSend = [];
+      console.log(postsdone);
+      postsdone.forEach(post => {
+        console.log(post);
+        if (post.user.handle == req.user.handle){
+          postsSend.push(post);
+        }
+        req.user.following.forEach(element => {
+            if(element.handle == post.user.handle){
+              postsSend.push(post);
+            } 
+    
+          });
+        });
       console.log(req.user.handle);
       if(pagetemp){
         res.render('index', { title: pagetemp.title, 
           name: pagetemp.name, username: pagetemp.username, handle: pagetemp.handle, tweets: pagetemp.tweets, followers: pagetemp.followers,
-          posts: postsdone, following: req.user.following, reqhandle: req.user.handle, potfol: allUsers});
+          posts: postsSend, following: req.user.following, reqhandle: req.user.handle, potfol: allUsers});
       } else{
         if(err){
           console.log(err);
