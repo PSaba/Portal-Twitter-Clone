@@ -70,9 +70,9 @@ router.get('/profilepage/:page', function(req, res){
    // var usersSend = new Set();
       userModel.find({}, {handle: 1, username: 1, name: 1, _id: 0}, function(err, allUsers){
         usersSend = allUsers;
-        // req.user.following.forEach(element => {
-        //   usersSend.delete(element);
-        // });
+        req.user.following.forEach(element => {
+          usersSend.remove(element);
+        });
         console.log(usersSend);
     userModel.findOne({handle: req.params.page}, function(err, pagetemp){
   postModel.find({"user.handle": req.user.handle}, function(err, postsdone){
@@ -119,6 +119,7 @@ router.post('/signedup', function(req, res, next){
       });
       newUser.save(function(err, page){
         if(err) {
+          console.log(err);
           res.render('signuppage', {error: 'Theres a mistake. Please try again'});
         }
         else {res.redirect('/' + req.body.handle.trim());}

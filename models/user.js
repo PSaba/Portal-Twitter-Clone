@@ -9,8 +9,8 @@ var schema = mongoose.Schema({
     email: {type: String, unique: true, required: true},
     password: {type: String, required: true},
     tweets: {type:Number, required: true},
-    following: {type: Array, required: true},
-    followers: {type: Array, required: true}
+    following: {type: Array},
+    followers: {type: Array}
 });
 
 schema.methods.checkPassword = function(password){
